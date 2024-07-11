@@ -1,11 +1,18 @@
 from flask import Flask , request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 from openai import OpenAI
-import os  ,openai
+from db.db_init import init_db, db  
+from db.models import Question 
+import os  ,openai , psycopg2
 
 app = Flask(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sabaataha@localhost:5432/flask_db'
+
+init_db(app)
 
 @app.route("/")
 def hello_world():
