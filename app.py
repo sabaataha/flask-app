@@ -41,6 +41,7 @@ def ask_question():
     
     return jsonify({'answer_text': answer_text}), 200
 
+
 #to check db content
 @app.route("/questions", methods=['GET'])
 def get_questions():
@@ -50,6 +51,6 @@ def get_questions():
         return jsonify(questions_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+    
 if __name__ == '__main__':
     app.run(debug=True)
