@@ -12,6 +12,7 @@ client = OpenAI()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sabaataha@localhost:5432/flask_db'
 
+
 init_db(app)
 
 @app.route("/")
@@ -32,11 +33,23 @@ def ask_question():
             messages=[{"role": "user", "content": question_text}]
         )
         answer_text = response.choices[0].message.content
+        new_question = Question(question=question_text, answer=answer_text)
+        db.session.add(new_question)
+        db.session.commit()
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
     return jsonify({'answer_text': answer_text}), 200
-  
+
+#to check db content
+@app.route("/questions", methods=['GET'])
+def get_questions():
+    try:
+        questions = Question.query.all()
+        questions_list = [{'id': q.id, 'question': q.question, 'answer': q.answer} for q in questions]
+        return jsonify(questions_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
