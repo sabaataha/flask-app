@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: flask_db
+      POSTGRES_USER: sabaataha
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      
+
+  flask-app:
+    build: .
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: flask_db
+      DATABASE_USER: sabaataha
+      DB_URI: ${DB_URI}
+      OPENAI_API_KEY:  ${OPENAI_API_KEY}
+    ports:
+       - "5001:5001"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
