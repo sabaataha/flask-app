@@ -10,14 +10,17 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://sabaataha@localhost:5432/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://sabaataha@db:5432/flask_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db.init_app(app)
 
-init_db(app)
+with app.app_context():
+    init_db(app)
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>This is an OpenAI powered app !</p>"
 
 
 @app.route("/ask" ,  methods=['POST'])
@@ -53,4 +56,4 @@ def get_questions():
         return jsonify({'error': str(e)}), 500
     
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
